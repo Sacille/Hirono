@@ -3,14 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Hirono | моя коллекция (облачная синхронизация)</title>
+    <title>Hirono | моя коллекция</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-database-compat.js"></script>
     <style>
-        /* Стили (тёмно-зелёная тема, как вы любите) */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { background: #0a1a0e; font-family: 'Inter', sans-serif; color: #e0f0e0; padding: 2rem 1.5rem; line-height: 1.5; }
         .container { max-width: 1400px; margin: 0 auto; }
@@ -94,20 +92,18 @@
 </div>
 
 <script>
-    // ========== ВАША КОНФИГУРАЦИЯ FIREBASE ==========
-    // ВНИМАНИЕ: замените "ВАШ_DATABASE_URL" на реальный URL, который вы скопировали из Realtime Database.
+    // ========== ВАША КОНФИГУРАЦИЯ FIREBASE (уже с вашим databaseURL) ==========
     const firebaseConfig = {
         apiKey: "AIzaSyBpNlGCJSWvgONnCGX5otiyRReZg03X2CM",
         authDomain: "hirono-12cad.firebaseapp.com",
-        databaseURL: https://hirono-12cad-default-rtdb.firebaseio.com/,
+        databaseURL: "https://hirono-12cad-default-rtdb.firebaseio.com",
         projectId: "hirono-12cad",
         storageBucket: "hirono-12cad.firebasestorage.app",
         messagingSenderId: "615132679635",
         appId: "1:615132679635:web:4e7dc12096675578e2b326"
     };
-    // ===============================================
+    // =====================================================
 
-    // Инициализация Firebase
     firebase.initializeApp(firebaseConfig);
     const database = firebase.database();
     const collectionsRef = database.ref('collections');
@@ -143,7 +139,7 @@
             renderAll();
         }, (error) => {
             console.error(error);
-            alert("Ошибка загрузки из Firebase. Проверьте databaseURL и правила безопасности.");
+            alert("Ошибка загрузки из Firebase. Проверьте интернет и правила безопасности.");
         });
     }
 
@@ -151,7 +147,6 @@
         collectionsRef.set(collections).catch(err => console.error(err));
     }
 
-    // Функции редактирования (все вызывают saveToFirebase)
     function updateFigureImage(collectionId, figureIndex, base64Image) {
         const coll = collections.find(c => c.id === collectionId);
         if (coll && coll.figures[figureIndex]) {
@@ -298,7 +293,7 @@
     function deleteColHandler(e) { if(isAdmin) deleteCollectionById(e.currentTarget.dataset.delCol); }
     function editFigureHandler(e) { if(isAdmin) { const [colId, figIdx] = e.currentTarget.dataset.editFigure.split('|'); const coll=collections.find(c=>c.id===colId); if(coll && coll.figures[figIdx]) editFigureName(colId, parseInt(figIdx), coll.figures[figIdx].name); } }
 
-    function enableAdminMode() { const pwd=prompt("Пароль:"); if(pwd===ADMIN_PASSWORD) { isAdmin=true; document.getElementById("adminModeBtn").innerHTML='<i class="fas fa-user-astronaut"></i> Милашка-редактор'; document.getElementById("adminModeBtn").classList.add("active"); document.getElementById("addSection").classList.add("visible"); renderAll(); } else if(pwd) alert("Неверно"); }
+    function enableAdminMode() { const pwd=prompt("Пароль:"); if(pwd===ADMIN_PASSWORD) { isAdmin=true; document.getElementById("adminModeBtn").innerHTML='<i class="fas fa-user-astronaut"></i> Милашка-редактор'; document.getElementById("adminModeBtn").classList.add("active"); document.getElementById("addSection").classList.add("visible"); renderAll(); } else if(pwd) alert("Неверный пароль"); }
     function logoutAdmin() { isAdmin=false; document.getElementById("adminModeBtn").innerHTML='<i class="fas fa-lock"></i> Вход для владельца'; document.getElementById("adminModeBtn").classList.remove("active"); document.getElementById("addSection").classList.remove("visible"); renderAll(); }
     function toggleAdminMode() { if(isAdmin) { if(confirm("Выйти?")) logoutAdmin(); } else enableAdminMode(); }
 
